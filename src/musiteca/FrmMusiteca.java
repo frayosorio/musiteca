@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package musiteca;
 
 /**
@@ -17,10 +16,10 @@ public class FrmMusiteca extends javax.swing.JFrame {
      */
     public FrmMusiteca() {
         initComponents();
-        
-        String nombreArchivoXML=System.getProperty("user.dir")+"/src/datos/Musiteca.xml";
-        
-        Artista.dXML=Archivo.abrirDocumentoXML(nombreArchivoXML);
+
+        String nombreArchivoXML = "file:///" + System.getProperty("user.dir") + "/src/datos/Musiteca.xml";
+
+        Artista.dXML = Archivo.abrirDocumentoXML(nombreArchivoXML);
         Artista.obtener();
         Artista.mostrar(tblMusiteca);
     }
