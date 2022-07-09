@@ -1,27 +1,45 @@
 package musiteca;
 
 import java.util.*;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import org.w3c.dom.*;
 
-
 public class Cancion extends Item {
-
+    
     String genero;
     String duracion;
     int año;
-
+    String nombreArtista;
+    
     public void actualizar(String[] datos) {
         if (datos != null && datos.length >= 4) {
             this.nombre = datos[0];
-            this.genero = datos[1];
-            this.duracion = datos[2];
-            this.año = Integer.parseInt(datos[3]);
+            this.duracion = datos[1];
+            try {
+                this.año = Integer.parseInt(datos[2]);
+            } catch (Exception e) {
+                this.año = 0;
+            }
+            this.genero = datos[3];
         }
+    }
+    
+    public void actualizar(String[] datos, String nombreArtista) {
+        actualizar(datos);
+        this.nombreArtista = nombreArtista;
+    }
+    
+    public void reproducir() {
+        String nombreArchivo = rutaCanciones + "/" + this.nombreArtista + " - " + this.nombre + ".mp3";
+        
+        ReproductorMP3.reproducir(nombreArchivo);
     }
 
     //********* Atributos estaticos *********
     public static List<Cancion> canciones;
     public static Document dXML;
+    public static String rutaCanciones;
 
     //********* Metodos estaticos *********
     public static void obtener(Artista artista) {
@@ -54,9 +72,9 @@ public class Cancion extends Item {
                             //Obtener el nodo del genero
                             nl = nodo.getElementsByTagName("Genero");
                             datos[3] = nl.item(0).getTextContent();
-
-                            Cancion c=new Cancion();
-                            c.actualizar(datos);
+                            
+                            Cancion c = new Cancion();
+                            c.actualizar(datos, artista.nombre);
                             //Agregar el artista a la lista
                             canciones.add(c);
                         }
@@ -65,5 +83,22 @@ public class Cancion extends Item {
             }
         }
     }
-
+    
+    public static void mostrar(JTable tbl) {
+        String[] encabezados = new String[]{"Título", "Duración", "Año", "Género"};
+        
+        String[][] datos = new String[canciones.size()][encabezados.length];
+        
+        for (int i = 0; i < canciones.size(); i++) {
+            Cancion c = canciones.get(i);
+            datos[i][0] = c.nombre;
+            datos[i][1] = c.duracion;
+            datos[i][2] = String.valueOf(c.año);
+            datos[i][3] = c.genero;
+        }
+        
+        tbl.setModel(new DefaultTableModel(datos, encabezados));
+        tbl.getSelectionModel().removeListSelectionListener(Artista.escuchadorEventoSeleccion);
+    }
+    
 }

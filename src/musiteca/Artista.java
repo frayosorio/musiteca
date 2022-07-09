@@ -2,6 +2,7 @@ package musiteca;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import org.w3c.dom.*;
@@ -19,9 +20,17 @@ public class Artista extends Item {
         }
     }
 
+    public void mostrarFoto(JPanel pnl) {
+        String nombreArchivo = rutaFotos + "/" + this.nombre + ".jpg";
+        
+        Archivo.mostrarImagen(pnl, nombreArchivo);
+    }
+
     //********* Atributos estaticos *********
     public static List<Artista> artistas;
     public static Document dXML;
+    public static EscuchadorEventoSeleccion escuchadorEventoSeleccion;
+    public static String rutaFotos;
 
     //********* Metodos estaticos *********
     public static void obtener() {
@@ -56,7 +65,7 @@ public class Artista extends Item {
         }
     }
 
-    public static void mostrar(JTable tbl) {
+    public static void mostrar(JTable tbl, JPanel pnl) {
         String[] encabezados = new String[]{"Nombre", "Tipo", "Pais"};
 
         String[][] datos = new String[artistas.size()][encabezados.length];
@@ -69,6 +78,8 @@ public class Artista extends Item {
         }
 
         tbl.setModel(new DefaultTableModel(datos, encabezados));
+        escuchadorEventoSeleccion = new EscuchadorEventoSeleccion(tbl, pnl);
+        tbl.getSelectionModel().addListSelectionListener(escuchadorEventoSeleccion);
 
     }
 
